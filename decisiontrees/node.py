@@ -16,15 +16,23 @@ class Node:
 
     def _gen_tree(self):
 
-        classes = set(np.squeeze(np.asarray(self.matrix[:,  -1])))
+        print("Generating Tree")
+        classes = set(self.matrix[:,  -1])
 
         if len(classes) == 1:
             self.predict = lambda x: list(classes)[0]
+        elif (self.matrix[:, 0: -1] == self.matrix[:, 0: -1][0]).all():
+            labels = [int(label) for label in self.matrix[:, -1]]
+
+            def predict(_):
+                return np.random.choice(labels)
+            self.predict = predict
         else:
             self._gen_nodes()
 
     def _gen_nodes(self):
         # Split the input x_matrix into left and right
+
         (split_func, left_matrix, right_matrix) = find_split(self.matrix)
         self.split_func = split_func
         self.left_node = Node(left_matrix)

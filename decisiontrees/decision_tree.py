@@ -1,4 +1,4 @@
-from node import Node
+from decisiontrees.node import Node
 
 import numpy as np
 
