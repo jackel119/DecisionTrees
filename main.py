@@ -1,5 +1,7 @@
 import numpy as np
+from decisiontrees.decision_tree import DecisionTreeClassifier
 
-with open('data/clean_dataset.txt') as clean_dataset:
-    data = np.loadtxt(clean_dataset)
-    print(data)
+if __name__ == "__main__":
+    with open('data/clean_dataset.txt') as clean_dataset:
+        clean_data = np.loadtxt(clean_dataset)
+    dt = DecisionTreeClassifier().fit(clean_data)
