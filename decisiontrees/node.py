@@ -1,6 +1,5 @@
-from util.find_split import find_split
-
 import numpy as np
+from decisiontrees.utils.find_split import find_split
 
 
 class Node:
