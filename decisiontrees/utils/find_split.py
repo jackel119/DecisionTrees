@@ -1,4 +1,5 @@
 import math
+
 import numpy as np
 
 
@@ -24,14 +25,19 @@ def find_best_split(dataset, column_index):
     partition_g.sort(key=lambda x: x[0])
     partition_le = []
     dataset_size = float(len(partition_g))
+
     while len(partition_g) > 1:
         partition_le.append(partition_g.pop(0))
+
         if partition_le[-1][0] != partition_g[0][0]:
             remainder = get_dataset_entropy(partition_le, dataset_size) + \
                         get_dataset_entropy(partition_g, dataset_size)
+
             if remainder < min_remainder:
-                best_split_value = (partition_le[-1][0] + partition_g[0][0]) / 2
+                best_split_value = (partition_le[-1][0]
+                                    + partition_g[0][0]) / 2
                 min_remainder = remainder
+
     return best_split_value, min_remainder
 
 
@@ -46,6 +52,7 @@ def find_split(dataset):
     max_info_gain = -1
     h_dataset = calculate_dataset_entropy(dataset)
     print("H dataset: ", h_dataset)
+
     for i in range(dataset.shape[1] - 1):
         split_value, remainder = find_best_split(dataset, i)
         print("Remainder: ", remainder)
@@ -60,8 +67,12 @@ def find_split(dataset):
     print("Max info gain: ", max_info_gain)
     print("Best split value: ", best_split_value)
 
-    matrix_le = np.array([row for row in dataset if row[split_column_index] <= best_split_value])
-    matrix_g = np.array([row for row in dataset if row[split_column_index] > best_split_value])
+    matrix_le = np.array([row for row in dataset
+                          if row[split_column_index] <= best_split_value])
+    matrix_g = np.array([row for row in dataset
+                         if row[split_column_index] > best_split_value])
 
-    return (lambda data: data[split_column_index] <= best_split_value,
-           matrix_le, matrix_g)
+    return (split_column_index,
+            best_split_value,
+            matrix_le,
+            matrix_g)
