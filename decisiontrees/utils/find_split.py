@@ -1,14 +1,10 @@
 import math
 import numpy as np
 
-NUM_ROOMS = 4
-
 
 def calculate_dataset_entropy(dataset):
     labels = [row[-1] for row in dataset]
-    frequencies = [0] * NUM_ROOMS
-    for label in labels:
-        frequencies[int(label) - 1] += 1
+    _, frequencies = np.unique(labels, return_counts=True)
     probabilities = [frequency / len(labels) for frequency in frequencies]
     entropy = 0
     for probability in probabilities:
