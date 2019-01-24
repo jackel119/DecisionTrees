@@ -6,7 +6,7 @@ np.random.seed(50)
 
 
 def validate_model(train_data, test_data, print_confusion_matrix=False,
-                   pruning=False):
+                   pruning=False, debug=False):
     dt = DecisionTreeClassifier()
     dt.fit(train_data)
     acc = dt.evaluate(test_data)
@@ -18,7 +18,7 @@ def validate_model(train_data, test_data, print_confusion_matrix=False,
     pruned_acc = -1
 
     if pruning:
-        dt.prune(test_data)
+        dt.prune(test_data, debug=debug)
         pruned_acc = dt.evaluate(test_data)
 
     print(acc, pruned_acc)
@@ -46,4 +46,5 @@ if __name__ == "__main__":
     np.random.shuffle(noisy_data)
     # k_folds_cv(data)
     # k_folds_cv(noisy_data)
-    validate_model(data[:, :1600], data[:, 1600:], pruning=True)
+    validate_model(noisy_data[:1600], noisy_data[1600:],
+                   pruning=True, debug=True)

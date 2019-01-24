@@ -56,7 +56,8 @@ class Node:
 
         self.predict = predict
 
-    def _prune(self, validation_data):
+    def prune(self, validation_data, debug=False):
+
         if not self.is_leaf:
             # First prune left
 
@@ -65,14 +66,14 @@ class Node:
                                         if self.split_func(row)])
 
                 if len(left_matrix) > 0:
-                    self.left_node._prune(left_matrix)
+                    self.left_node.prune(left_matrix, debug=debug)
 
             if not self.right_node.is_leaf:
                 right_matrix = np.array([row for row in validation_data
                                         if not self.split_func(row)])
 
                 if len(right_matrix) > 0:
-                    self.right_node._prune(right_matrix)
+                    self.right_node.prune(right_matrix, debug=debug)
 
             # And then condition check if both left and right are leaves
             # after pruning
@@ -93,16 +94,24 @@ class Node:
                             and left_replacement_acc >= no_replacement_acc:
                         # Replace with left node
                         self.predict = self.left_node.predict
+
+                        if debug:
+                            print("Replacing", str(self),
+                                  "with", str(self.left_node))
                     else:
                         # Replace with right node
                         self.predict = self.right_node.predict
+
+                        if debug:
+                            print("Replacing", str(self),
+                                  "with", str(self.left_node))
                     self.left_node = None
                     self.right_node = None
                     self.is_leaf = True
 
     def evaluate(self, test_data):
         test_X, test_y = test_data[:, :-1], test_data[:, -1]
-        pred_y = self.predict(test_X)
+        pred_y = np.array(list(map(self.predict, test_X)))
         accuracy = np.sum(test_y == pred_y) / len(test_y)
 
         return accuracy
