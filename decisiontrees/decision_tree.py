@@ -19,5 +19,11 @@ class DecisionTreeClassifier:
 
         return np.array(result)
 
+    def evaluate(self, test_data):
+        return self.root_node.evaluate(test_data)
+
+    def prune(self, prune_data):
+        self.root_node.prune(prune_data)
+
     def __repr__(self):
         return self.root_node.__repr__()

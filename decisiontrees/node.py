@@ -63,12 +63,16 @@ class Node:
             if not self.left_node.is_leaf:
                 left_matrix = np.array([row for row in validation_data
                                         if self.split_func(row)])
-                self.left_node._prune(left_matrix)
+
+                if len(left_matrix) > 0:
+                    self.left_node._prune(left_matrix)
 
             if not self.right_node.is_leaf:
                 right_matrix = np.array([row for row in validation_data
                                         if not self.split_func(row)])
-                self.right_node._prune(right_matrix)
+
+                if len(right_matrix) > 0:
+                    self.right_node._prune(right_matrix)
 
             # And then condition check if both left and right are leaves
             # after pruning

@@ -5,22 +5,23 @@ import numpy as np
 np.random.seed(50)
 
 
-def validate_model(train_data, test_data, print_confusion_matrix=False):
+def validate_model(train_data, test_data, print_confusion_matrix=False,
+                   pruning=False):
     dt = DecisionTreeClassifier()
     dt.fit(train_data)
-    test_X, test_y = test_data[:, :-1], test_data[:, -1]
-    pred_y = dt.predict(test_X)
-    # results = np.column_stack((pred_y, test_y))
-    # print(dt)
-    # print(test_y == pred_y)
-    accuracy = np.sum(test_y == pred_y) / len(test_y)
-    print(accuracy)
+    acc = dt.evaluate(test_data)
 
-    if print_confusion_matrix:
-        confusion_matrix = build_confusion_matrix(pred_y, test_y)
-        print(confusion_matrix)
+    # if print_confusion_matrix:
+    #     confusion_matrix = build_confusion_matrix(pred_y, test_y)
+    #     print(confusion_matrix)
 
-    return accuracy, pred_y
+    pruned_acc = -1
+
+    if pruning:
+        dt.prune(test_data)
+        pruned_acc = dt.evaluate(test_data)
+
+    print(acc, pruned_acc)
 
 
 def k_folds_cv(dataset, k=10):
@@ -45,5 +46,4 @@ if __name__ == "__main__":
     np.random.shuffle(noisy_data)
     # k_folds_cv(data)
     # k_folds_cv(noisy_data)
-    validate_model(noisy_data, data, print_confusion_matrix=True)
-    validate_model(data, noisy_data, print_confusion_matrix=True)
+    validate_model(data[:, :1600], data[:, 1600:], pruning=True)
