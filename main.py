@@ -1,8 +1,8 @@
-import numpy as np
-np.random.seed(50)
-
 from decisiontrees.utils import build_confusion_matrix
 from decisiontrees import DecisionTreeClassifier
+
+import numpy as np
+np.random.seed(50)
 
 
 def validate_model(train_data, test_data, print_confusion_matrix=False):
@@ -15,19 +15,22 @@ def validate_model(train_data, test_data, print_confusion_matrix=False):
     # print(test_y == pred_y)
     accuracy = np.sum(test_y == pred_y) / len(test_y)
     print(accuracy)
+
     if print_confusion_matrix:
         confusion_matrix = build_confusion_matrix(pred_y, test_y)
         print(confusion_matrix)
+
     return accuracy, pred_y
 
 
 def k_folds_cv(dataset, k=10):
     partition_size = len(dataset) // k
     accuracy_sum = 0
+
     for i in range(k):
-        test_data = dataset[i * partition_size : (i + 1) * partition_size]
+        test_data = dataset[i * partition_size: (i + 1) * partition_size]
         train_indexes = np.r_[0: (i * partition_size),
-                                ((i + 1) * partition_size): len(dataset)]
+                              ((i + 1) * partition_size): len(dataset)]
         train_data = dataset[train_indexes]
         accuracy_sum += validate_model(train_data, test_data)
     print(accuracy_sum / k)
