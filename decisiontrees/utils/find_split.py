@@ -8,9 +8,11 @@ def calculate_dataset_entropy(dataset):
     _, frequencies = np.unique(labels, return_counts=True)
     probabilities = [frequency / len(labels) for frequency in frequencies]
     entropy = 0
+
     for probability in probabilities:
         if probability != 0:
             entropy -= probability * math.log2(probability)
+
     return entropy
 
 
@@ -51,11 +53,11 @@ def find_split(dataset):
     best_split_value = 0
     max_info_gain = -1
     h_dataset = calculate_dataset_entropy(dataset)
-    print("H dataset: ", h_dataset)
+    # print("H dataset: ", h_dataset)
 
     for i in range(dataset.shape[1] - 1):
         split_value, remainder = find_best_split(dataset, i)
-        print("Remainder: ", remainder)
+        # print("Remainder: ", remainder)
         info_gain = h_dataset - remainder
 
         if info_gain > max_info_gain:
@@ -63,9 +65,9 @@ def find_split(dataset):
             best_split_value = split_value
             max_info_gain = info_gain
 
-    print("Split col idx:", split_column_index)
-    print("Max info gain: ", max_info_gain)
-    print("Best split value: ", best_split_value)
+    # print("Split col idx:", split_column_index)
+    # print("Max info gain: ", max_info_gain)
+    # print("Best split value: ", best_split_value)
 
     matrix_le = np.array([row for row in dataset
                           if row[split_column_index] <= best_split_value])

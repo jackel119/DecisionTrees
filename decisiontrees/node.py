@@ -51,9 +51,9 @@ class Node:
 
         def predict(row):
             if self.split_func(row):
-                return self.right_node.predict(row)
-            else:
                 return self.left_node.predict(row)
+            else:
+                return self.right_node.predict(row)
 
         self.predict = predict
 

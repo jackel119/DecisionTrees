@@ -7,6 +7,12 @@ if __name__ == "__main__":
         clean_data = np.loadtxt(clean_dataset)
     dt = DecisionTreeClassifier()
     dt.fit(clean_data)
-    test_set = clean_data[:, :-1]
-    print(test_set)
-    print(set(dt.predict(test_set)))
+    test_X, test_y = clean_data[:, :-1], clean_data[:, -1]
+    pred_y = dt.predict(test_X)
+    print(test_y)
+    print(pred_y)
+    results = np.column_stack((pred_y, test_y))
+    print(dt)
+
+    for result in results:
+        print(result)

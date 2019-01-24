@@ -22,6 +22,4 @@ def gen_quadrants_data(no_points):
 
     labeled_data = np.append(arr, labels, axis=1)
 
-    print(labeled_data)
-
     return labeled_data
