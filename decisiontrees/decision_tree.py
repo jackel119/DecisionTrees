@@ -18,3 +18,6 @@ class DecisionTreeClassifier:
             result.append(self.root_node.predict(row))
 
         return np.array(result)
+
+    def __repr__(self):
+        return self.root_node.__repr__()
