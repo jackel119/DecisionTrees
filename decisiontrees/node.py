@@ -79,7 +79,17 @@ class Node:
             # after pruning
 
             if self.left_node.is_leaf and self.right_node.is_leaf:
-                # Check if pruning will improve accuracy
+
+                # If two leaves are the same, then always replace and halt
+
+                if self.left_node.predict(None) \
+                        == self.right_node.predict(None):
+                    self._prune_replacement(self.left_node, debug=debug)
+
+                    return
+
+                # Two leaves are different,
+                # check if pruning will improve accuracy
                 no_replacement_acc = self.evaluate(validation_data)
                 left_replacement_acc = self.left_node.evaluate(validation_data)
                 right_replacement_acc = \
@@ -93,21 +103,21 @@ class Node:
                     if left_replacement_acc >= right_replacement_acc \
                             and left_replacement_acc >= no_replacement_acc:
                         # Replace with left node
-                        self.predict = self.left_node.predict
-
-                        if debug:
-                            print("Replacing", str(self),
-                                  "with", str(self.left_node))
+                        self._prune_replacement(self.left_node, debug=debug)
                     else:
                         # Replace with right node
-                        self.predict = self.right_node.predict
+                        self._prune_replacement(self.right_node, debug=debug)
 
-                        if debug:
-                            print("Replacing", str(self),
-                                  "with", str(self.left_node))
-                    self.left_node = None
-                    self.right_node = None
-                    self.is_leaf = True
+    def _prune_replacement(self, replacement_node, debug=False):
+
+        if debug:
+            print("Replacing", str(self),
+                  "with", str(replacement_node))
+        self.predict = replacement_node.predict
+
+        self.left_node = None
+        self.right_node = None
+        self.is_leaf = True
 
     def evaluate(self, test_data):
         test_X, test_y = test_data[:, :-1], test_data[:, -1]
