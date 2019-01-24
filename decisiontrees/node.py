@@ -16,7 +16,6 @@ class Node:
 
     def _gen_tree(self):
 
-        print("Generating Tree")
         classes = set(self.matrix[:,  -1])
 
         if len(classes) == 1:
