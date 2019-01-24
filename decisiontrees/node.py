@@ -64,4 +64,4 @@ class Node:
             return "Node Col " + str(self.split_col) +\
                 " Value " + str(self.split_value) + " (" +\
                 self.left_node.__repr__() + ") (" \
-                + self.left_node.__repr__() + ")"
+                + self.right_node.__repr__() + ")"

@@ -15,8 +15,8 @@ def gen_quadrants_data(no_points):
             else:
                 return 3
 
-    arr = np.random.rand(no_points, 2) * 100
-    arr = arr - 50
+    arr = np.random.rand(no_points, 2) * 200
+    arr = arr - 100
 
     labels = np.array(list(map(quadrant, arr))).reshape((no_points, 1))
 
