@@ -1,5 +1,5 @@
-from decisiontrees.utils import build_confusion_matrix
 from decisiontrees import DecisionTreeClassifier
+from decisiontrees.utils import build_confusion_matrix
 
 import numpy as np
 np.random.seed(50)
@@ -15,13 +15,12 @@ def validate_model(train_data, test_data, print_confusion_matrix=False,
     #     confusion_matrix = build_confusion_matrix(pred_y, test_y)
     #     print(confusion_matrix)
 
-    pruned_acc = -1
-
     if pruning:
         dt.prune(test_data, debug=debug)
         pruned_acc = dt.evaluate(test_data)
+        print(acc, pruned_acc)
 
-    print(acc, pruned_acc)
+    print(acc)
 
 
 def k_folds_cv(dataset, k=10):

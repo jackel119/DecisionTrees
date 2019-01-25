@@ -4,7 +4,7 @@ from decisiontrees.utils import find_split
 
 class Node:
     def __init__(self, matrix):
-        """__init__
+        """ Constructor
 
         :param matrix: matrix of training data, with labels in the format
         [f1, f2, f3....., label]
@@ -15,6 +15,8 @@ class Node:
         pass
 
     def _gen_tree(self):
+        """ Generate trees recursively
+        (if there is a sensible split)"""
 
         classes = set(self.matrix[:,  -1])
 
@@ -37,7 +39,7 @@ class Node:
             self._gen_nodes()
 
     def _gen_nodes(self):
-        # Split the input x_matrix into left and right
+        """ Generates left and right nodes """
 
         (split_col_index, split_value,
          left_matrix, right_matrix) = find_split(self.matrix)
@@ -57,6 +59,11 @@ class Node:
         self.predict = predict
 
     def prune(self, validation_data, debug=False):
+        """prune
+
+        :param validation_data: matrix of validation data
+        :param debug: enable debugging console prints
+        """
 
         if not self.is_leaf:
             # First prune left
@@ -109,6 +116,12 @@ class Node:
                         self._prune_replacement(self.right_node, debug=debug)
 
     def _prune_replacement(self, replacement_node, debug=False):
+        """_prune_replacement
+
+        :param replacement_node: Node to replace
+                                 current node with
+        :param debug: debug
+        """
 
         if debug:
             print("Replacing", str(self),
@@ -120,6 +133,11 @@ class Node:
         self.is_leaf = True
 
     def evaluate(self, test_data):
+        """ Evaluation function
+
+        :param test_data: labeled test matrix
+        :return: accuracy as a float
+        """
         test_X, test_y = test_data[:, :-1], test_data[:, -1]
         pred_y = np.array(list(map(self.predict, test_X)))
         accuracy = np.sum(test_y == pred_y) / len(test_y)
