@@ -11,6 +11,7 @@ class Node:
         """
 
         self.matrix = matrix
+        self._rand_dist = False
         self._gen_tree()
         pass
 
@@ -27,11 +28,13 @@ class Node:
 
         elif (self.matrix[:, 0: -1] == self.matrix[:, 0: -1][0]).all():
 
-            labels = [int(label) for label in self.matrix[:, -1]]
+            self.rand_labels = [int(label) for label in self.matrix[:, -1]]
+            self.rand_labels.sort()
 
             def predict(_):
-                return np.random.choice(labels)
+                return np.random.choice(self.rand_labels)
             self.predict = predict
+            self._rand_dist = True
             self.is_leaf = True
 
         else:
@@ -128,6 +131,10 @@ class Node:
                   "with", str(replacement_node))
         self.predict = replacement_node.predict
 
+        if replacement_node._rand_dist:
+            self._rand_dist = True
+            self.rand_labels = replacement_node.rand_labels
+
         self.left_node = None
         self.right_node = None
         self.is_leaf = True
@@ -146,7 +153,10 @@ class Node:
 
     def __repr__(self):
         if self.is_leaf:
-            return "Leaf " + str(self.predict(None))
+            if self._rand_dist:
+                return "Rand Dist " + str(list(set(self._rand_dist)))
+            else:
+                return "Leaf " + str(self.predict(None))
         else:
             return "Node Col " + str(self.split_col) +\
                 " Value " + str(self.split_value) + " (" +\
