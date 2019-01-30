@@ -14,7 +14,35 @@ def build_confusion_matrix(pred_y, actual_y):
 
 
 def stats(cm):
+    # TODO: Try and optimise this function to iterate over the confusion
+    #  matrix once
     statistics = {}
-
-    for i in range(len(confusion_matrix)):
-        pass
+    recalls = []
+    precisions = []
+    f1_measures = []
+    for i in range(len(cm)):
+        tp = 0
+        fn = 0
+        for j in range(len(cm)):
+            if i == j:
+                tp += cm[i][j]
+            else:
+                fn += cm[i][j]
+        recalls.append(tp / (tp + fn))
+    statistics.update({"recalls": recalls})
+    for i in range(len(cm)):
+        tp = 0
+        fp = 0
+        for j in range(len(cm)):
+            if i == j:
+                tp += cm[j][i]
+            else:
+                fp += cm[j][i]
+        precisions.append(tp / (tp + fp))
+    statistics.update({"precisions": precisions})
+    for i in range(len(recalls)):
+        recall = recalls[i]
+        precision = precisions[i]
+        f1_measures.append(2 * ((recall * precision) / (recall + precision)))
+    statistics.update({"F1-measures": f1_measures})
+    return statistics
