@@ -28,13 +28,15 @@ class Node:
 
         elif (self.matrix[:, 0: -1] == self.matrix[:, 0: -1][0]).all():
 
-            self.rand_labels = [int(label) for label in self.matrix[:, -1]]
-            self.rand_labels.sort()
-
-            def predict(_):
-                return np.random.choice(self.rand_labels)
-            self.predict = predict
-            self._rand_dist = True
+            # self.rand_labels = [int(label) for label in self.matrix[:, -1]]
+            # self.rand_labels.sort()
+            # 
+            # def predict(_):
+            #     return np.random.choice(self.rand_labels)
+            # self.predict = predict
+            # self._rand_dist = True
+            counts = np.bincount([int(label) for label in self.matrix[:, -1]])
+            self.predict = lambda x : np.argmax(counts)
             self.is_leaf = True
 
         else:
@@ -46,7 +48,6 @@ class Node:
 
         (split_col_index, split_value,
          left_matrix, right_matrix) = find_split(self.matrix)
-
         self.split_col = split_col_index
         self.split_value = split_value
         self.split_func = lambda data: data[split_col_index] <= split_value
@@ -91,32 +92,57 @@ class Node:
             if self.left_node.is_leaf and self.right_node.is_leaf:
 
                 # If two leaves are the same, then always replace and halt
-
-                if self.left_node.predict(None) \
-                        == self.right_node.predict(None):
-                    self._prune_replacement(self.left_node, debug=debug)
-
-                    return
-
-                # Two leaves are different,
-                # check if pruning will improve accuracy
-                no_replacement_acc = self.evaluate(validation_data)
-                left_replacement_acc = self.left_node.evaluate(validation_data)
-                right_replacement_acc = \
-                    self.right_node.evaluate(validation_data)
-
-                if no_replacement_acc > left_replacement_acc \
-                        and no_replacement_acc > right_replacement_acc:
-                    # We don't prune
-                    pass
+                
+                counts = np.bincount([int(label) for label in validation_data[:, -1]])
+                with_prune = np.argmax(counts)
+                prune_acc = counts[with_prune] / len(validation_data)
+                
+                left_data = np.array([row for row in validation_data
+                                        if self.split_func(row)])
+                right_data = np.array([row for row in validation_data
+                                        if not self.split_func(row)])
+                if len(left_data) > 0:
+                    left_acc = self.left_node.evaluate(left_data)
                 else:
-                    if left_replacement_acc >= right_replacement_acc \
-                            and left_replacement_acc >= no_replacement_acc:
-                        # Replace with left node
-                        self._prune_replacement(self.left_node, debug=debug)
-                    else:
-                        # Replace with right node
-                        self._prune_replacement(self.right_node, debug=debug)
+                    left_acc = 0
+                    
+                if len(right_data) > 0:    
+                    right_acc = self.right_node.evaluate(right_data)
+                else:
+                    right_acc = 0
+                no_prune_acc = (left_acc * len(left_data) + right_acc * len(right_data)) / len(validation_data)
+                
+                if prune_acc >= no_prune_acc:
+                    self.left_node = None
+                    self.right_node = None
+                    self.predict = lambda _: with_prune
+                    self.is_leaf = True
+
+                # if self.left_node.predict(None) \
+                #         == self.right_node.predict(None):
+                #     self._prune_replacement(self.left_node, debug=debug)
+                # 
+                #     return
+                # 
+                # # Two leaves are different,
+                # # check if pruning will improve accuracy
+                # no_replacement_acc = self.evaluate(validation_data)
+                # left_replacement_acc = self.left_node.evaluate(validation_data)
+                # right_replacement_acc = \
+                #     self.right_node.evaluate(validation_data)
+                # 
+                # if no_replacement_acc > left_replacement_acc \
+                #         and no_replacement_acc > right_replacement_acc:
+                #     # We don't prune
+                #     pass
+                # else:
+                #     if left_replacement_acc >= right_replacement_acc \
+                #             and left_replacement_acc >= no_replacement_acc:
+                #         # Replace with left node
+                #         self._prune_replacement(self.left_node, debug=debug)
+                #     else:
+                #         # Replace with right node
+                #         self._prune_replacement(self.right_node, debug=debug)
 
     def _prune_replacement(self, replacement_node, debug=False):
         """_prune_replacement
