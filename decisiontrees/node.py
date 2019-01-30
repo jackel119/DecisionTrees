@@ -143,13 +143,19 @@ class Node:
         """ Evaluation function
 
         :param test_data: labeled test matrix
-        :return: accuracy as a float
+        :return: accuracy as a float 
         """
         test_X, test_y = test_data[:, :-1], test_data[:, -1]
         pred_y = np.array(list(map(self.predict, test_X)))
         accuracy = np.sum(test_y == pred_y) / len(test_y)
 
         return accuracy
+        
+    def __str__(self):
+        if not self.is_leaf:
+            return ("x" + str(self.split_col) + "<=" + str(self.split_value))
+        else:
+            return str(self.predict(None))
 
     def __repr__(self):
         if self.is_leaf:

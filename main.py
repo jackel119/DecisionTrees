@@ -12,6 +12,7 @@ def validate_model(train_data, test_data, validation_data=None,
     dt = DecisionTreeClassifier()
     dt.fit(train_data)
     acc = dt.evaluate(test_data)['accuracy']
+    dt.plotTree()
 
     # if print_confusion_matrix:
     #     confusion_matrix = build_confusion_matrix(pred_y, test_y)
