@@ -11,7 +11,7 @@ def validate_model(train_data, test_data, validation_data=None,
                    pruning=False, debug=False):
     dt = DecisionTreeClassifier()
     dt.fit(train_data)
-    acc = dt.evaluate(test_data)
+    acc = dt.evaluate(test_data)['accuracy']
 
     # if print_confusion_matrix:
     #     confusion_matrix = build_confusion_matrix(pred_y, test_y)
@@ -21,7 +21,7 @@ def validate_model(train_data, test_data, validation_data=None,
         if validation_data is None:
             raise Exception("Cannot prune without validation data!")
         dt.prune(validation_data, debug=debug)
-        pruned_acc = dt.evaluate(test_data)
+        pruned_acc = dt.evaluate(test_data)['accuracy']
         # print(acc, pruned_acc)
 
         return pruned_acc

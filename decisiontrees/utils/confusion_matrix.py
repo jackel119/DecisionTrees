@@ -13,5 +13,8 @@ def build_confusion_matrix(pred_y, actual_y):
     return np.array(confusion_matrix)
 
 
-def stats(confusion_matrix):
-    pass
+def stats(cm):
+    statistics = {}
+
+    for i in range(len(confusion_matrix)):
+        pass
