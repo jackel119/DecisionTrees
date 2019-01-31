@@ -11,6 +11,7 @@ class Node:
         """
 
         self.matrix = matrix
+        self.most_frequent_label = -1
         self._rand_dist = False
         self._gen_tree()
         pass
@@ -19,14 +20,17 @@ class Node:
         """ Generate trees recursively
         (if there is a sensible split)"""
 
-        classes = set(self.matrix[:,  -1])
+        labels = [int(label) for label in self.matrix[:, -1]]
+        training_frequencies = np.bincount(labels)
+        self.most_frequent_label = np.argmax(training_frequencies)
+        # print(training_frequencies)
+        # print(self.most_frequent_label)
 
-        if len(classes) == 1:
-
-            self.predict = lambda x: list(classes)[0]
+        if training_frequencies[self.most_frequent_label] == len(labels):
+            self.predict = lambda _: self.most_frequent_label
             self.is_leaf = True
 
-        elif (self.matrix[:, 0: -1] == self.matrix[:, 0: -1][0]).all():
+        elif (self.matrix[:, 0: -1] == self.matrix[0, 0: -1]).all():
 
             self.rand_labels = [int(label) for label in self.matrix[:, -1]]
             self.rand_labels.sort()
@@ -89,34 +93,45 @@ class Node:
             # after pruning
 
             if self.left_node.is_leaf and self.right_node.is_leaf:
+                no_replacement_acc = self.evaluate(validation_data)
+                freq_in_validation_data = \
+                    len(validation_data[validation_data[:, -1] ==
+                                    self.most_frequent_label])
+                replacement_acc = freq_in_validation_data / len(validation_data)
+                if replacement_acc >= no_replacement_acc:
+                    self.predict = lambda _: self.most_frequent_label
+                    self.is_leaf = True
+                    self.left_node = None
+                    self.right_node = None
+
 
                 # If two leaves are the same, then always replace and halt
 
-                if self.left_node.predict(None) \
-                        == self.right_node.predict(None):
-                    self._prune_replacement(self.left_node, debug=debug)
-
-                    return
+                # if self.left_node.predict(None) \
+                #         == self.right_node.predict(None):
+                #     self._prune_replacement(self.left_node, debug=debug)
+                #
+                #     return
 
                 # Two leaves are different,
                 # check if pruning will improve accuracy
-                no_replacement_acc = self.evaluate(validation_data)
-                left_replacement_acc = self.left_node.evaluate(validation_data)
-                right_replacement_acc = \
-                    self.right_node.evaluate(validation_data)
-
-                if no_replacement_acc > left_replacement_acc \
-                        and no_replacement_acc > right_replacement_acc:
-                    # We don't prune
-                    pass
-                else:
-                    if left_replacement_acc >= right_replacement_acc \
-                            and left_replacement_acc >= no_replacement_acc:
-                        # Replace with left node
-                        self._prune_replacement(self.left_node, debug=debug)
-                    else:
-                        # Replace with right node
-                        self._prune_replacement(self.right_node, debug=debug)
+                # no_replacement_acc = self.evaluate(validation_data)
+                # left_replacement_acc = self.left_node.evaluate(validation_data)
+                # right_replacement_acc = \
+                #     self.right_node.evaluate(validation_data)
+                #
+                # if no_replacement_acc > left_replacement_acc \
+                #         and no_replacement_acc > right_replacement_acc:
+                #     # We don't prune
+                #     pass
+                # else:
+                #     if left_replacement_acc >= right_replacement_acc \
+                #             and left_replacement_acc >= no_replacement_acc:
+                #         # Replace with left node
+                #         self._prune_replacement(self.left_node, debug=debug)
+                #     else:
+                #         # Replace with right node
+                #         self._prune_replacement(self.right_node, debug=debug)
 
     def _prune_replacement(self, replacement_node, debug=False):
         """_prune_replacement
