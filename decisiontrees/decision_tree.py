@@ -1,5 +1,5 @@
 from decisiontrees.node import Node
-from decisiontrees.utils import build_confusion_matrix
+from decisiontrees.utils import build_confusion_matrix, stats
 import matplotlib.pyplot as plt
 
 
@@ -30,8 +30,8 @@ class DecisionTreeClassifier:
 
         return {
             "accuracy": acc,
-            "confusion_matrix": cm
-            #"stats": stats(cm)
+            "confusion_matrix": cm,
+            "stats": stats(cm)
         }
 
     def prune(self, prune_data, debug=False):

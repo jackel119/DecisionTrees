@@ -29,7 +29,7 @@ def stats(cm):
             else:
                 fn += cm[i][j]
         recalls.append(tp / (tp + fn))
-    statistics.update({"recalls": recalls})
+    statistics["recalls"] = recalls
     for i in range(len(cm)):
         tp = 0
         fp = 0
@@ -39,10 +39,10 @@ def stats(cm):
             else:
                 fp += cm[j][i]
         precisions.append(tp / (tp + fp))
-    statistics.update({"precisions": precisions})
+    statistics["precisions"] = precisions
     for i in range(len(recalls)):
         recall = recalls[i]
         precision = precisions[i]
         f1_measures.append(2 * ((recall * precision) / (recall + precision)))
-    statistics.update({"F1-measures": f1_measures})
+    statistics["F1-measures"] = f1_measures
     return statistics
