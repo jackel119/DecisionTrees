@@ -32,6 +32,10 @@ def build_tree(train_data, validation_data=None, pruning=False):
 
 def k_folds_cv(dataset, k=10, validation=False):
     accuracy_sum = 0
+    if validation:
+        num_samples = k * (k - 1)
+    else:
+        num_samples = k
     for train_validation_data, test_data in k_folds_split(dataset, k):
         if not validation:
             accuracy_sum += validate_model(train_validation_data, test_data)
@@ -41,7 +45,7 @@ def k_folds_cv(dataset, k=10, validation=False):
                 dt = build_tree(train_data, validation_data, pruning=True)
                 accuracy_sum += dt.evaluate(test_data)['accuracy']
 
-    print(accuracy_sum / (k * (k - 1)))
+    print(accuracy_sum / num_samples)
 
 
 if __name__ == "__main__":

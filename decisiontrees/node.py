@@ -37,6 +37,7 @@ class Node:
 
             def predict(_):
                 return np.random.choice(self.rand_labels)
+
             self.predict = predict
             self._rand_dist = True
             self.is_leaf = True
@@ -71,23 +72,26 @@ class Node:
         :param validation_data: matrix of validation data
         :param debug: enable debugging console prints
         """
-
         if not self.is_leaf:
-            # First prune left
+            if len(validation_data) == 0:
+                self.predict = lambda _: self.most_frequent_label
+                self.is_leaf = True
+                self.left_node = None
+                self.right_node = None
+                return
 
+            # First prune left
             if not self.left_node.is_leaf:
                 left_matrix = np.array([row for row in validation_data
                                         if self.split_func(row)])
 
-                if len(left_matrix) > 0:
-                    self.left_node.prune(left_matrix, debug=debug)
+                self.left_node.prune(left_matrix, debug=debug)
 
             if not self.right_node.is_leaf:
                 right_matrix = np.array([row for row in validation_data
-                                        if not self.split_func(row)])
+                                         if not self.split_func(row)])
 
-                if len(right_matrix) > 0:
-                    self.right_node.prune(right_matrix, debug=debug)
+                self.right_node.prune(right_matrix, debug=debug)
 
             # And then condition check if both left and right are leaves
             # after pruning
@@ -96,14 +100,13 @@ class Node:
                 no_replacement_acc = self.evaluate(validation_data)
                 freq_in_validation_data = \
                     len(validation_data[validation_data[:, -1] ==
-                                    self.most_frequent_label])
+                                        self.most_frequent_label])
                 replacement_acc = freq_in_validation_data / len(validation_data)
                 if replacement_acc >= no_replacement_acc:
                     self.predict = lambda _: self.most_frequent_label
                     self.is_leaf = True
                     self.left_node = None
                     self.right_node = None
-
 
                 # If two leaves are the same, then always replace and halt
 
@@ -116,7 +119,8 @@ class Node:
                 # Two leaves are different,
                 # check if pruning will improve accuracy
                 # no_replacement_acc = self.evaluate(validation_data)
-                # left_replacement_acc = self.left_node.evaluate(validation_data)
+                # left_replacement_acc = self.left_node.evaluate(
+                # validation_data)
                 # right_replacement_acc = \
                 #     self.right_node.evaluate(validation_data)
                 #
@@ -165,7 +169,7 @@ class Node:
         accuracy = np.sum(test_y == pred_y) / len(test_y)
 
         return accuracy
-        
+
     def __str__(self):
         if not self.is_leaf:
             return ("x" + str(self.split_col) + "<=" + str(self.split_value))
@@ -179,7 +183,7 @@ class Node:
             else:
                 return "Leaf " + str(self.predict(None))
         else:
-            return "Node Col " + str(self.split_col) +\
-                " Value " + str(self.split_value) + " (" +\
-                self.left_node.__repr__() + ") (" \
-                + self.right_node.__repr__() + ")"
+            return "Node Col " + str(self.split_col) + \
+                   " Value " + str(self.split_value) + " (" + \
+                   self.left_node.__repr__() + ") (" \
+                   + self.right_node.__repr__() + ")"
