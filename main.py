@@ -1,6 +1,6 @@
 from decisiontrees import DecisionTreeClassifier
-from decisiontrees.utils import build_confusion_matrix, \
-    split_data, k_folds_split
+from decisiontrees.utils import \
+    k_folds_split, split_data
 
 import numpy as np
 
