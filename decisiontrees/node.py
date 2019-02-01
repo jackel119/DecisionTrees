@@ -23,8 +23,8 @@ class Node:
         labels = [int(label) for label in self.matrix[:, -1]]
         training_frequencies = np.bincount(labels)
         self.most_frequent_label = np.argmax(training_frequencies)
-        # print(training_frequencies)
-        # print(self.most_frequent_label)
+
+        # If all the labels are the same, this is a leaf
 
         if training_frequencies[self.most_frequent_label] == len(labels):
             self.predict = lambda _: self.most_frequent_label
@@ -72,15 +72,15 @@ class Node:
         :param validation_data: matrix of validation data
         :param debug: enable debugging console prints
         """
+
         if not self.is_leaf:
             if len(validation_data) == 0:
-                self.predict = lambda _: self.most_frequent_label
-                self.is_leaf = True
-                self.left_node = None
-                self.right_node = None
+                self._prune_replacement(debug=debug)
+
                 return
 
             # First prune left
+
             if not self.left_node.is_leaf:
                 left_matrix = np.array([row for row in validation_data
                                         if self.split_func(row)])
@@ -98,71 +98,41 @@ class Node:
 
             if self.left_node.is_leaf and self.right_node.is_leaf:
                 no_replacement_acc = self.evaluate(validation_data)
+                # numpy magic to see if actual = pred
                 freq_in_validation_data = \
                     len(validation_data[validation_data[:, -1] ==
                                         self.most_frequent_label])
-                replacement_acc = freq_in_validation_data / len(validation_data)
+                # Accuracy of replacing node with
+                # leaf returning most_freq_label
+                replacement_acc = \
+                    freq_in_validation_data / len(validation_data)
+
                 if replacement_acc >= no_replacement_acc:
-                    self.predict = lambda _: self.most_frequent_label
-                    self.is_leaf = True
-                    self.left_node = None
-                    self.right_node = None
+                    self._prune_replacement(debug=debug)
 
-                # If two leaves are the same, then always replace and halt
+        return
 
-                # if self.left_node.predict(None) \
-                #         == self.right_node.predict(None):
-                #     self._prune_replacement(self.left_node, debug=debug)
-                #
-                #     return
+    def _prune_replacement(self, debug=False):
+        """ Replace current node with leaf of most_freq_label
 
-                # Two leaves are different,
-                # check if pruning will improve accuracy
-                # no_replacement_acc = self.evaluate(validation_data)
-                # left_replacement_acc = self.left_node.evaluate(
-                # validation_data)
-                # right_replacement_acc = \
-                #     self.right_node.evaluate(validation_data)
-                #
-                # if no_replacement_acc > left_replacement_acc \
-                #         and no_replacement_acc > right_replacement_acc:
-                #     # We don't prune
-                #     pass
-                # else:
-                #     if left_replacement_acc >= right_replacement_acc \
-                #             and left_replacement_acc >= no_replacement_acc:
-                #         # Replace with left node
-                #         self._prune_replacement(self.left_node, debug=debug)
-                #     else:
-                #         # Replace with right node
-                #         self._prune_replacement(self.right_node, debug=debug)
-
-    def _prune_replacement(self, replacement_node, debug=False):
-        """_prune_replacement
-
-        :param replacement_node: Node to replace
-                                 current node with
-        :param debug: debug
+        :param debug: Bool, Debug printing
         """
 
         if debug:
-            print("Replacing", str(self),
-                  "with", str(replacement_node))
-        self.predict = replacement_node.predict
-
-        if replacement_node._rand_dist:
-            self._rand_dist = True
-            self.rand_labels = replacement_node.rand_labels
-
+            print("Replacing", repr(self),
+                  "with (Leaf, ", self.most_frequent_label)
+        self.predict = lambda _: self.most_frequent_label
+        self.is_leaf = True
         self.left_node = None
         self.right_node = None
-        self.is_leaf = True
+
+        return
 
     def evaluate(self, test_data):
         """ Evaluation function
 
         :param test_data: labeled test matrix
-        :return: accuracy as a float 
+        :return: accuracy as a float
         """
         test_X, test_y = test_data[:, :-1], test_data[:, -1]
         pred_y = np.array(list(map(self.predict, test_X)))
