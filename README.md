@@ -69,3 +69,14 @@ Note that the lists of `stats` are indexed by their class label minus one, i.e. 
 You can also visualize the tree, using `dt.plot_tree()`, which will give you something like this:
 
 ![Tree Example](images/tree.png)
+
+### Tree Height and Average Height
+
+There is also a `height` and `average_height` (the average height of both of its sub-trees) method to find those respective attributes of a tree.
+
+```
+>>> dt.height()
+8
+>>> dt.average_height()
+5.4
+```
