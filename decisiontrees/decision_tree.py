@@ -77,5 +77,11 @@ class DecisionTreeClassifier:
                              midx, y1, x2, y2-10)
         plt.show()
 
+    def depth(self):
+        return self.root_node._depth()
+
+    def average_depth(self):
+        return self.root_node._average_depth()
+
     def __repr__(self):
         return self.root_node.__repr__()
