@@ -9,13 +9,21 @@ import numpy as np
 
 class DecisionTreeClassifier:
 
-    def __init__(self, n_layers=None):
+    def __init__(self):
         pass
 
     def fit(self, train_data):
+        """ Trains the tree on the given train_data
+
+        :param train_data: 2d numpy array with the last column as labels
+        """
         self.root_node = Node(train_data)
 
     def predict(self, x_data):
+        """ Returns predictions of classes, given the x data
+
+        :param x_data: unlabeled 2d numpy array
+        """
         result = []
 
         for row in x_data:
@@ -24,6 +32,10 @@ class DecisionTreeClassifier:
         return np.array(result)
 
     def evaluate(self, test_data):
+        """ Returns a dictionary of statistics from an evaluation
+
+        :param test_data: 2d numpy array with the last column as labels
+        """
         test_X, test_y = test_data[:, :-1], test_data[:, -1]
         pred_y = self.predict(test_X)
         cm = build_confusion_matrix(pred_y, test_y)
@@ -36,6 +48,12 @@ class DecisionTreeClassifier:
         }
 
     def prune(self, prune_data, debug=False):
+        """ Prunes the tree, given a set of validation data to prune with
+
+        :param prune_data: 2d numpy array with the last column as labels
+        :param debug: Enable debugging printing
+        """
+
         if len(prune_data) == 0:
             raise Exception("Validation data is empty!")
         self.root_node.prune(prune_data, debug=debug)
@@ -61,6 +79,7 @@ class DecisionTreeClassifier:
                                  (x1+x2)/2, y1, x2, y2-10)
 
     def plot_tree(self):
+        """Plots the tree using matplotlib"""
         # Plot root
         x1 = 0
         y1 = 0
@@ -78,9 +97,13 @@ class DecisionTreeClassifier:
         plt.show()
 
     def height(self):
+        """ Height of the tree"""
+
         return self.root_node._height() - 1
 
     def average_height(self):
+        """ Average Height of the tree """
+
         return self.root_node._average_height() - 1
 
     def __len__(self):
