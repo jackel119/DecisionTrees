@@ -20,9 +20,11 @@ def stats(cm):
     recalls = []
     precisions = []
     f1_measures = []
+
     for i in range(len(cm)):
         tp = 0
         fn = 0
+
         for j in range(len(cm)):
             if i == j:
                 tp += cm[i][j]
@@ -30,9 +32,11 @@ def stats(cm):
                 fn += cm[i][j]
         recalls.append(tp / (tp + fn))
     statistics["recalls"] = recalls
+
     for i in range(len(cm)):
         tp = 0
         fp = 0
+
         for j in range(len(cm)):
             if i == j:
                 tp += cm[j][i]
@@ -40,9 +44,11 @@ def stats(cm):
                 fp += cm[j][i]
         precisions.append(tp / (tp + fp))
     statistics["precisions"] = precisions
+
     for i in range(len(recalls)):
         recall = recalls[i]
         precision = precisions[i]
         f1_measures.append(2 * ((recall * precision) / (recall + precision)))
-    statistics["F1-measures"] = f1_measures
+    statistics["f1"] = f1_measures
+
     return statistics
