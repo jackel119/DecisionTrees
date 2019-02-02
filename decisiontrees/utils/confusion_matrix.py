@@ -29,8 +29,8 @@ def stats(cm):
         recalls.append(recall)
         precisions.append(precision)
         f1_measures.append(f1_measure)
-    statistics["recalls"] = recalls
-    statistics["precisions"] = precisions
-    statistics["f1"] = f1_measures
+    statistics['recalls'] = recalls
+    statistics['precisions'] = precisions
+    statistics['f1'] = f1_measures
 
     return statistics
