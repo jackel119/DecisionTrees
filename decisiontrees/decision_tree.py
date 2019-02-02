@@ -83,5 +83,8 @@ class DecisionTreeClassifier:
     def average_height(self):
         return self.root_node._average_height() - 1
 
+    def __len__(self):
+        return self.height()
+
     def __repr__(self):
         return self.root_node.__repr__()
