@@ -1,26 +1,10 @@
 import numpy as np
 
 from decisiontrees import DecisionTreeClassifier
-from decisiontrees.utils import \
-    k_folds_split, stats
+from decisiontrees.utils import k_folds_split
+
 
 # np.random.seed(50)
-
-
-# def validate_model(train_data, test_data, validation_data=None,
-#                    stats=False,
-#                    pruning=False, debug=False):
-#     dt = build_tree(train_data, validation_data, pruning)
-#     dt_statistics = dt.evaluate(test_data)
-#
-#     if stats:
-#         print(dt_statistics["confusion_matrix"])
-#         print(dt_statistics["stats"]["recalls"])
-#         print(dt_statistics["stats"]["precisions"])
-#         print(dt_statistics["stats"]["F1-measures"])
-#
-#     return dt_statistics['accuracy']
-
 
 def build_tree(train_data, validation_data=None, pruning=False):
     dt = DecisionTreeClassifier()
@@ -34,9 +18,20 @@ def build_tree(train_data, validation_data=None, pruning=False):
     return dt
 
 
+def update_statistics(statistics, cumulative_cm, list_of_recalls,
+                      list_of_f1_measures, list_of_precisions):
+    cumulative_cm += statistics['confusion_matrix']
+    list_of_recalls.append(statistics['stats']['recalls'])
+    list_of_precisions.append(statistics['stats']['precisions'])
+    list_of_f1_measures.append(statistics['stats']['f1'])
+
+
 def k_folds_cv(dataset, k=10, validation=False):
     accuracy_sum = 0
     cumulative_cm = np.zeros((4, 4))
+    list_of_recalls = []
+    list_of_precisions = []
+    list_of_f1_measures = []
     if validation:
         num_samples = k * (k - 1)
     else:
@@ -47,23 +42,29 @@ def k_folds_cv(dataset, k=10, validation=False):
             dt = build_tree(train_validation_data)
             statistics = dt.evaluate(test_data)
             accuracy_sum += statistics['accuracy']
-            cumulative_cm += statistics['confusion_matrix']
+            update_statistics(statistics, cumulative_cm, list_of_recalls,
+                              list_of_f1_measures, list_of_precisions)
         else:
             for train_data, validation_data in \
                     k_folds_split(train_validation_data, k - 1):
                 dt = build_tree(train_data, validation_data, pruning=True)
                 statistics = dt.evaluate(test_data)
                 accuracy_sum += statistics['accuracy']
-                cumulative_cm += statistics['confusion_matrix']
+                update_statistics(statistics, cumulative_cm, list_of_recalls,
+                                  list_of_f1_measures, list_of_precisions)
 
-    cumulative_cm /= num_samples
-    average_statistics = stats(cumulative_cm)
+    accuracy = accuracy_sum / num_samples
+    average_cm = cumulative_cm / num_samples
+    calculate_average = lambda arr: [sum(x) / num_samples for x in zip(*arr)]
+    average_statistics = {'recalls': calculate_average(list_of_recalls),
+                          'precisions': calculate_average(list_of_precisions),
+                          'f1': calculate_average(list_of_f1_measures)}
 
-    print(accuracy_sum / num_samples)
-    print(cumulative_cm)
+    print(accuracy)
+    print(average_cm)
     print(average_statistics)
 
-    return accuracy_sum / num_samples, cumulative_cm, average_statistics
+    return accuracy, average_cm, average_statistics
 
 
 if __name__ == "__main__":
