@@ -31,21 +31,21 @@ with open('data/clean_dataset.txt') as clean_dataset:
 
 To make a prediction, simply call `predict`:
 
-```
+```python
 dt.predict(test_data)
 ```
 where `test_data` is the exact same format as the training data, but without the last column (of labels).
 
 There is also an `evaluate` function:
 
-```
+```python
 dt.evaluate(labeled_test_data)
 ```
 where `labeled_test_data` is the same format as `training_data` (i.e. it is labeled). What this will do is internally call `predict` on the features, then compare with the actual labels in order to compute accuracy, precision and recall (of each class), as well as a confusion matrix (as a `numpy` array, with predictions as columns and actual labels as rows). This is all returned as a dictionary.
 
 For example:
 
-```
+```python
 >>> evaluation = dt.evaluate(labeled_test_data)
 >>> evaluation['accuracy']
 0.975
@@ -65,3 +65,7 @@ array([[79,  0,  0,  0],
 Note that the lists of `stats` are indexed by their class label minus one, i.e. the value at the 0th index of the `precision` list is the precision of class 1.
 
 ### Tree Representations
+
+You can also visualize the tree, using `dt.plot_tree()`, which will give you something like this:
+
+![Tree Example](images/tree.png)

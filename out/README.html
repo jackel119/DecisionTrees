@@ -20,25 +20,27 @@ dt = DecisionTreeClassifier()</code></pre><p>Then, simply <code>fit</code> the m
 <pre class="hljs"><code><span class="hljs-keyword">with</span> open(<span class="hljs-string">'data/clean_dataset.txt'</span>) <span class="hljs-keyword">as</span> clean_dataset:
   training_data = np.loadtxt(clean_dataset)</code></pre><h3 id="making-predictions-and-evaluations"><a class="header-link" href="#making-predictions-and-evaluations"></a>Making predictions and evaluations</h3>
 <p>To make a prediction, simply call <code>predict</code>:</p>
-<pre class="hljs"><code><span class="hljs-selector-tag">dt</span>.predict(test_data)</code></pre><p>where <code>test_data</code> is the exact same format as the training data, but without the last column (of labels).</p>
+<pre class="hljs"><code>dt.predict(test_data)</code></pre><p>where <code>test_data</code> is the exact same format as the training data, but without the last column (of labels).</p>
 <p>There is also an <code>evaluate</code> function:</p>
-<pre class="hljs"><code><span class="hljs-selector-tag">dt</span>.evaluate(labeled_test_data)</code></pre><p>where <code>labeled_test_data</code> is the same format as <code>training_data</code> (i.e. it is labeled). What this will do is internally call <code>predict</code> on the features, then compare with the actual labels in order to compute accuracy, precision and recall (of each class), as well as a confusion matrix (as a <code>numpy</code> array, with predictions as columns and actual labels as rows). This is all returned as a dictionary.</p>
+<pre class="hljs"><code>dt.evaluate(labeled_test_data)</code></pre><p>where <code>labeled_test_data</code> is the same format as <code>training_data</code> (i.e. it is labeled). What this will do is internally call <code>predict</code> on the features, then compare with the actual labels in order to compute accuracy, precision and recall (of each class), as well as a confusion matrix (as a <code>numpy</code> array, with predictions as columns and actual labels as rows). This is all returned as a dictionary.</p>
 <p>For example:</p>
-<pre class="hljs"><code>&gt;&gt;&gt; evaluation = dt.evaluate(labeled_test_data)
-&gt;&gt;&gt; evaluation[<span class="hljs-string">'accuracy'</span>]
+<pre class="hljs"><code><span class="hljs-meta">&gt;&gt;&gt; </span>evaluation = dt.evaluate(labeled_test_data)
+<span class="hljs-meta">&gt;&gt;&gt; </span>evaluation[<span class="hljs-string">'accuracy'</span>]
 <span class="hljs-number">0.975</span>
-&gt;&gt;&gt; evaluation[<span class="hljs-string">'stats'</span>]
+<span class="hljs-meta">&gt;&gt;&gt; </span>evaluation[<span class="hljs-string">'stats'</span>]
 {
   <span class="hljs-string">'recalls'</span>: [<span class="hljs-number">1.0</span>, <span class="hljs-number">1.0</span>, <span class="hljs-number">0.9878048780487805</span>, <span class="hljs-number">1.0</span>],
   <span class="hljs-string">'precisions'</span>: [<span class="hljs-number">1.0</span>, <span class="hljs-number">0.9857142857142858</span>, <span class="hljs-number">1.0</span>, <span class="hljs-number">1.0</span>],
   <span class="hljs-string">'f1'</span>: [<span class="hljs-number">1.0</span>, <span class="hljs-number">0.9928057553956835</span>, <span class="hljs-number">0.9938650306748467</span>, <span class="hljs-number">1.0</span>]
 }
-&gt;&gt;&gt; evaluation[<span class="hljs-string">'confusion_matrix'</span>]
+<span class="hljs-meta">&gt;&gt;&gt; </span>evaluation[<span class="hljs-string">'confusion_matrix'</span>]
 array([[<span class="hljs-number">79</span>,  <span class="hljs-number">0</span>,  <span class="hljs-number">0</span>,  <span class="hljs-number">0</span>],
        [ <span class="hljs-number">0</span>, <span class="hljs-number">69</span>,  <span class="hljs-number">0</span>,  <span class="hljs-number">0</span>],
        [ <span class="hljs-number">0</span>,  <span class="hljs-number">1</span>, <span class="hljs-number">81</span>,  <span class="hljs-number">0</span>],
        [ <span class="hljs-number">0</span>,  <span class="hljs-number">0</span>,  <span class="hljs-number">0</span>, <span class="hljs-number">70</span>]])</code></pre><p>Note that the lists of <code>stats</code> are indexed by their class label minus one, i.e. the value at the 0th index of the <code>precision</code> list is the precision of class 1.</p>
 <h3 id="tree-representations"><a class="header-link" href="#tree-representations"></a>Tree Representations</h3>
+<p>You can also visualize the tree, using <code>dt.plot_tree()</code>, which will give you something like this:</p>
+<p class="img-container"><img src="images/tree.png" alt="Tree Example"></p>
     </article>
   </body>
 </html>
