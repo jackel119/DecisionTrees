@@ -14,9 +14,9 @@ dt.fit(data)
 print(dt)
 
 
-data = gen_quadrants_data(100)
+data = gen_quadrants_data(1000)
 
 X, y = data[:, :-1], data[:, -1]
 
-pred_y = dt.predict(X)
-print(np.column_stack((pred_y, y)))
+test_data = gen_quadrants_data(300)
+__import__('pdb').set_trace()
