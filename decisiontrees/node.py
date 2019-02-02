@@ -140,19 +140,19 @@ class Node:
 
         return accuracy
 
-    def _depth(self):
+    def _height(self):
         if self.is_leaf:
             return 1
         else:
-            return 1 + max(self.left_node._depth(),
-                           self.right_node._depth())
+            return 1 + max(self.left_node._height(),
+                           self.right_node._height())
 
-    def _average_depth(self):
+    def _average_height(self):
         if self.is_leaf:
             return 1
         else:
-            return 1 + ((self.left_node._average_depth() +
-                         self.right_node._average_depth()) / 2)
+            return 1 + ((self.left_node._average_height() +
+                         self.right_node._average_height()) / 2)
 
     def __str__(self):
         if not self.is_leaf:
