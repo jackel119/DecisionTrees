@@ -142,7 +142,7 @@ class Node:
 
     def _height(self):
         if self.is_leaf:
-            return 1
+            return 0
         else:
             return 1 + max(self.left_node._height(),
                            self.right_node._height())

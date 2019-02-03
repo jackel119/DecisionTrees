@@ -99,12 +99,12 @@ class DecisionTreeClassifier:
     def height(self):
         """ Height of the tree"""
 
-        return self.root_node._height() - 1
+        return self.root_node._height()
 
     def average_height(self):
         """ Average Height of the tree """
 
-        return self.root_node._average_height() - 1
+        return self.root_node._average_height()
 
     def __len__(self):
         return self.height()
