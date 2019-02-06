@@ -1,6 +1,6 @@
 import numpy as np
 
-from decisiontrees import DecisionTreeClassifier
+from decisiontrees import DecisionTreeClassifier, RandomForestClassifier
 from decisiontrees.utils import k_folds_split
 
 
@@ -32,6 +32,7 @@ def k_folds_cv(dataset, k=10, validation=False):
     list_of_recalls = []
     list_of_precisions = []
     list_of_f1_measures = []
+
     if validation:
         num_samples = k * (k - 1)
     else:
@@ -74,6 +75,8 @@ if __name__ == "__main__":
         noisy_data = np.loadtxt(noisy_dataset)
     np.random.shuffle(data)
     np.random.shuffle(noisy_data)
+    rf = RandomForestClassifier()
+    rf.fit(data)
     # k_folds_cv(data, validation=True)
     # k_folds_cv(noisy_data, validation=True)
     # k_folds_cv(noisy_data, validation=False)
