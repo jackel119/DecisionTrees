@@ -18,26 +18,30 @@ def stats(cm):
     recalls = []
     precisions = []
     f1_measures = []
-
+    accuracy_sum = 0
+    num_entries = 0
     for i in range(len(cm)):
+        accuracy_sum += cm[i, i]
         tp = cm[i, i]
         row = cm[i]
         col = cm[:, i]
 
         row_sum = sum(row)
+        num_entries += row_sum
+
         if row_sum == 0:
-            recall = 0
+            recall = 1
         else:
             recall = tp / row_sum
 
         col_sum = sum(col)
         if col_sum == 0:
-            precision = 0
+            precision = 1
         else:
             precision = tp / col_sum
 
-        if recall == 0 and precision == 0:
-            f1_measure = -1
+        if tp == 0:
+            f1_measure = 1
         else:
             f1_numerator = (recall * precision)
             f1_denominator = (recall + precision)
@@ -46,6 +50,7 @@ def stats(cm):
         recalls.append(recall)
         precisions.append(precision)
         f1_measures.append(f1_measure)
+    statistics['accuracy'] = accuracy_sum / num_entries
     statistics['recalls'] = recalls
     statistics['precisions'] = precisions
     statistics['f1'] = f1_measures
