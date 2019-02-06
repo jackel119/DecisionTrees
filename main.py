@@ -4,7 +4,7 @@ from decisiontrees import DecisionTreeClassifier, RandomForestClassifier
 from decisiontrees.utils import k_folds_split
 
 
-# np.random.seed(50)
+# np.random.seed(43010107)
 
 def build_tree(train_data, validation_data=None, pruning=False):
     dt = DecisionTreeClassifier()
@@ -75,8 +75,13 @@ if __name__ == "__main__":
         noisy_data = np.loadtxt(noisy_dataset)
     np.random.shuffle(data)
     np.random.shuffle(noisy_data)
+    # rf = RandomForestClassifier()
+    # rf.fit(data[:1800])
+    # rf.evaluate(data[1800:])
     rf = RandomForestClassifier()
-    rf.fit(data)
+    rf.fit(noisy_data[:1800])
+    result = rf.evaluate(noisy_data[1800:])
+    print(result['accuracy'])
     # k_folds_cv(data, validation=True)
     # k_folds_cv(noisy_data, validation=True)
     # k_folds_cv(noisy_data, validation=False)
