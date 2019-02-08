@@ -3,8 +3,8 @@ import numpy as np
 from decisiontrees import DecisionTreeClassifier
 from decisiontrees.utils import k_folds_split
 
+np.random.seed(50)
 
-# np.random.seed(50)
 
 def build_tree(train_data, validation_data=None, pruning=False):
     dt = DecisionTreeClassifier()
@@ -32,6 +32,7 @@ def k_folds_cv(dataset, k=10, validation=False):
     list_of_recalls = []
     list_of_precisions = []
     list_of_f1_measures = []
+
     if validation:
         num_samples = k * (k - 1)
     else:
@@ -60,11 +61,11 @@ def k_folds_cv(dataset, k=10, validation=False):
                           'precisions': calculate_average(list_of_precisions),
                           'f1': calculate_average(list_of_f1_measures)}
 
-    print(accuracy)
-    print(average_cm)
-    print(average_statistics)
-
-    return accuracy, average_cm, average_statistics
+    return {
+        "accuracy": accuracy,
+        "confusion_matrix": average_cm,
+        "statistics": average_statistics
+    }
 
 
 if __name__ == "__main__":
@@ -73,16 +74,8 @@ if __name__ == "__main__":
     with open('data/noisy_dataset.txt') as noisy_dataset:
         noisy_data = np.loadtxt(noisy_dataset)
     np.random.shuffle(data)
-    np.random.shuffle(noisy_data)
-    # k_folds_cv(data, validation=True)
-    # k_folds_cv(noisy_data, validation=True)
-    # k_folds_cv(noisy_data, validation=False)
-    # k_folds_cv(data, validation=True)
-    # k_folds_cv(data, validation=False)
-    # res = validate_model(noisy_data[:1600], noisy_data[1800:],
-    #                      validation_data=noisy_data[1600:1800],
-    #                      pruning=True, stats=True)
-    # res1 = validate_model(noisy_data[:1800], noisy_data[1800:],
-    #                       pruning=False, stats=True)
-    # print(res, res1)
-    # validate_model(data[:1800], data[1800:], stats=True)
+    evaluation =\
+        k_folds_cv(data, k=10, validation=True)
+    print(evaluation["accuracy"])
+    print(evaluation["confusion_matrix"])
+    print(evaluation["statistics"])
