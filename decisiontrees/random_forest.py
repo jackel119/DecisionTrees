@@ -1,10 +1,9 @@
-from decisiontrees import DecisionTreeClassifier
-from random import random, shuffle
-
 import numpy as np
-import pdb
 
+from decisiontrees import DecisionTreeClassifier
 from decisiontrees.utils import build_confusion_matrix, stats
+
+from random import random, shuffle
 
 
 class RandomForestClassifier:
@@ -57,12 +56,15 @@ class RandomForestClassifier:
         """
         num_rows = len(x_data)
         predictions = np.zeros((num_rows, self.num_labels))
+
         for (vote_weight, tree, features) in self.forest_info:
             predicted_labels = tree.predict(x_data[:, features])
+
             for i in range(num_rows):
                 predictions[i, int(predicted_labels[i] - 1)] += vote_weight
         # print(predictions)
         result = [np.argmax(prediction) + 1 for prediction in predictions]
+
         return np.array(result)
 
     def evaluate(self, test_data):
@@ -76,6 +78,7 @@ class RandomForestClassifier:
         cm = build_confusion_matrix(pred_y, test_y)
         print(cm)
         correct_predictions = 0
+
         for i in range(len(cm)):
             correct_predictions += cm[i, i]
 
