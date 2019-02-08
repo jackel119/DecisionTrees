@@ -9,7 +9,7 @@ from decisiontrees.utils import build_confusion_matrix, stats
 
 class RandomForestClassifier:
 
-    def __init__(self, n_trees=20):
+    def __init__(self, n_trees=50):
         self.forest_info = []
         self.n_trees = n_trees
         self.num_labels = 0
