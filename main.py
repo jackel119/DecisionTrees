@@ -3,8 +3,6 @@ import numpy as np
 from decisiontrees import DecisionTreeClassifier, RandomForestClassifier
 from decisiontrees.utils import k_folds_split
 
-np.random.seed(50)
-
 
 def build_tree(train_data, validation_data=None, pruning=False):
     dt = DecisionTreeClassifier()
@@ -71,6 +69,7 @@ def k_folds_cv(dataset, k=10, validation=False):
 if __name__ == "__main__":
     with open('data/clean_dataset.txt') as f:
         data = np.loadtxt(f)
+    np.random.seed(50)
     np.random.shuffle(data)
     evaluation =\
         k_folds_cv(data, k=10, validation=True)
