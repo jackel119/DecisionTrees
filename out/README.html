@@ -41,6 +41,15 @@ array([[<span class="hljs-number">79</span>,  <span class="hljs-number">0</span>
 <h3 id="tree-representations"><a class="header-link" href="#tree-representations"></a>Tree Representations</h3>
 <p>You can also visualize the tree, using <code>dt.plot_tree()</code>, which will give you something like this:</p>
 <p class="img-container"><img src="images/tree.png" alt="Tree Example"></p>
-    </article>
+<h3 id="tree-height-and-average-height"><a class="header-link" href="#tree-height-and-average-height"></a>Tree Height and Average Height</h3>
+<p>There is also a <code>height</code> method.</p>
+<pre class="hljs"><code>&gt;&gt;&gt; <span class="hljs-selector-tag">dt</span>.<span class="hljs-attribute">height</span>()
+<span class="hljs-number">8</span></code></pre><h3 id="random-forest-model"><a class="header-link" href="#random-forest-model"></a>Random Forest Model</h3>
+<p>We also wrote a Random Forest extension, under the <code>RandomForestClassifier</code> class. It has the exact same interface as <code>DecisionTreeClassifier</code> (apart from depth).</p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> decisiontrees <span class="hljs-keyword">import</span> RandomForestClassifier
+
+rf = RandomForestClassifier()
+rf.fit(train_data)
+predictions = rf.predict(test_data)</code></pre>    </article>
   </body>
 </html>

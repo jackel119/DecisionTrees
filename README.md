@@ -72,11 +72,21 @@ You can also visualize the tree, using `dt.plot_tree()`, which will give you som
 
 ### Tree Height and Average Height
 
-There is also a `height` and `average_height` (the average height of both of its sub-trees) method to find those respective attributes of a tree.
+There is also a `height` method.
 
 ```
 >>> dt.height()
 8
->>> dt.average_height()
-5.4
+```
+
+### Random Forest Model
+
+We also wrote a Random Forest extension, under the ``RandomForestClassifier`` class. It has the exact same interface as `DecisionTreeClassifier` (apart from depth).
+
+```python
+from decisiontrees import RandomForestClassifier
+
+rf = RandomForestClassifier()
+rf.fit(train_data)
+predictions = rf.predict(test_data)
 ```

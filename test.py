@@ -1,4 +1,4 @@
-from decisiontrees import DecisionTreeClassifier
+from decisiontrees import DecisionTreeClassifier, RandomForestClassifier
 from decisiontrees.utils import gen_quadrants_data
 
 import numpy as np
