@@ -7,20 +7,23 @@ The interface is inspired by other popular machine learning libraries such as `K
 
 ### Overall Structure 
 
-The most significant parts of our implementation can be found in 4 files:
+The most significant parts of our implementation can be found in 6 files:
 
 `find_split.py` (utils package): A utility file that provides functionality to identify the best attribute to split the dataset on. The find\_split() function, defined in this file, is used by each node of the Decision Tree. It takes a dataset and returns an index of the attribute to split on, the value to split on in that attribute and the two partitions of data after the split is performed. 
 
 `confusion_matrix.py` (utils package): Another utility file that is used to compute the confusion matrix, using build_confusion_matrix(), and all the statistics associated with the confusion matrix, using stats(), to assess how well the Decision Tree is performing. These statistics include the recall, precision and F1-measure for each class (indicating which room the user is standing in).
 
+`evaluate.py:` This file contains the k-folds cross validation algorithm that is used to evaluate the performance of trees with and without pruning. The function used for this evaluation is `k_folds_cv()` and it uses two helper functions, `build_tree()` and `update_statistics()`, build a tree and update the statistics calculated so far, in each fold of the algorithm.
+
 `node.py:` The structure of the Node class is defined in this file. The Node class abstracts was designed to abstract away the internal tree representation and the logic associated with building a Decision Tree or using it for predicting the user's location. The functionality it provides ranges from generating child nodes (using _gen_nodes()) to being able to node specific pruning and evaluation functions.
 
 `decision_tree.py:` This file defines the blueprint for the DecisionTreeClassifier class that outlines the public API required in order to provide a user with an interface to the root node of a Decision Tree. The functions available as a part of the API are fit, evaluate, predict, prune and plot\_tree. Functionality to calculate the maximum depth of the tree is also provided in this class.
 
+`random_forest.py:` The Random Forest Algorithm is implemented in this file as an extension to the task. It provides a very similar API to the DecisionTreeClassifier but does not provide a function to calculate the depth, as it generates a forest with many trees. This algorithm has a better performance on both the noisy as well as the clean datasets. 
 
 ### Instantiation and training
 
-To use, first import (from top level of this folder, similar to what can be found in `main.py`)
+To use, first import (from top level of this folder, similar to what can be found in `decisiontrees/evaluate.py`)
 
 ```python
 from decisiontrees import DecisionTreeClassifier
@@ -108,6 +111,8 @@ predictions = rf.predict(test_data)
 The `main.py` file is constructed to allow users to easily configure the setup to build the kind of tree they want on their own custom dataset.
 
 ```python
+from decisiontrees.evaluate import k_folds_cv
+
 if __name__ == "__main__":
     with open('data/clean_dataset.txt') as f:
         data = np.loadtxt(f)
