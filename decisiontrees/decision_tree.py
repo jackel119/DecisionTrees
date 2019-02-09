@@ -58,25 +58,24 @@ class DecisionTreeClassifier:
             raise Exception("Validation data is empty!")
         self.root_node.prune(prune_data, debug=debug)
 
-    def _plot_tree_util(self, is_left, node, x1, y1, x2, y2):
+    def _plot_tree_util(self, parentx, node, x1, y1, x2, y2):
         midx = (x1+x2)/2
         plt.text(midx, y2, str(node), size=10, color='white',
                  ha="center", va="center",
                  bbox=dict(facecolor='black', edgecolor='red'))
 
-        if is_left:
-            parentx = x2
-        else:
-            parentx = x1
-
         # Draw line to parent
         plt.plot([parentx, midx], [y2+10, y2], 'ro-')
 
         if not node.is_leaf:
-            self._plot_tree_util(True, node.left_node,
-                                 x1, y1, (x1+x2)/2, y2-10)
-            self._plot_tree_util(False, node.right_node,
-                                 (x1+x2)/2, y1, x2, y2-10)
+            left_height = node.left_node._height() + 1
+            right_height = node.right_node._height() + 1
+            weight = left_height / (left_height + right_height)
+            div_x = x1 + weight * (x2 - x1)
+            self._plot_tree_util(midx, node.left_node,
+                                 x1, y1, div_x, y2 - 10)
+            self._plot_tree_util(midx, node.right_node,
+                                 div_x, y1, x2, y2-10)
 
     def plot_tree(self):
         """Plots the tree using matplotlib"""
@@ -90,9 +89,9 @@ class DecisionTreeClassifier:
                  ha="center", va="center",
                  bbox=dict(facecolor='black', edgecolor='red'))
 
-        self._plot_tree_util(True, self.root_node.left_node,
+        self._plot_tree_util(midx, self.root_node.left_node,
                              x1, y1, midx, y2-10)
-        self._plot_tree_util(False, self.root_node.right_node,
+        self._plot_tree_util(midx, self.root_node.right_node,
                              midx, y1, x2, y2-10)
         plt.show()
 
