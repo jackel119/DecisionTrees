@@ -2,11 +2,19 @@ import numpy as np
 
 
 def build_confusion_matrix(pred_y, actual_y):
+    """build confusion matrix from predictions and actual labels
+
+    :param pred_y: np array of labels
+    :param actual_y: np array of labels
+    """
+    # compute the size of the matrix
     confusion_matrix_size = int(max(max(pred_y), max(actual_y)))
 
+    # initialise confusion matrix to matrix of zeros
     confusion_matrix = [[0 for _ in range(confusion_matrix_size)]
                         for _ in range(confusion_matrix_size)]
 
+    # for each pair, update correct position of the matrix
     for x, y in zip(actual_y, pred_y):
         confusion_matrix[int(x) - 1][int(y) - 1] += 1
 
@@ -14,6 +22,11 @@ def build_confusion_matrix(pred_y, actual_y):
 
 
 def stats(cm):
+    """compute statistics using confusion matrix
+
+    :param cm: 2d array
+    """
+    # initialise the statistics
     statistics = {}
     recalls = []
     precisions = []

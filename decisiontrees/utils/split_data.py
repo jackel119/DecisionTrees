@@ -2,11 +2,11 @@ import numpy as np
 
 
 def split_data(dataset, i, k=10):
-    """ Splits data into partitions for k folds
+    """ Splits data at index i
 
     :param dataset:
-    :param i:
-    :param k:
+    :param i: int
+    :param k: int
     """
     partition_size = len(dataset) // k
 
@@ -19,5 +19,10 @@ def split_data(dataset, i, k=10):
 
 
 def k_folds_split(dataset, k):
+    """ Splits data into partitions for k folds
+
+    :param dataset:
+    :param k: int
+    """
     for i in range(k):
         yield split_data(dataset, i, k)
