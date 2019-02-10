@@ -99,7 +99,7 @@ class RandomForestClassifier:
         cm = build_confusion_matrix(pred_y, test_y)
         correct_predictions = 0
 
-        update the accuracy on based on the diagonal values
+        # update the accuracy on based on the diagonal values
         for i in range(len(cm)):
             correct_predictions += cm[i, i]
 

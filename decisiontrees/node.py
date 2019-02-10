@@ -46,7 +46,7 @@ class Node:
                 return np.random.choice(self.rand_labels)
 
             self.predict = predict
-                self._rand_dist = True
+            self._rand_dist = True
             self.is_leaf = True
 
         else:
