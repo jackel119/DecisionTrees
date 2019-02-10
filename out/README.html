@@ -11,15 +11,23 @@
   <body>
     <article class="markdown-body"><h1 id="decision-trees"><a class="header-link" href="#decision-trees"></a>Decision Trees</h1>
 <p>This is a simple implementation of decision trees.</p>
-<p>The interface is inspired by other popular machine learning libraries such as <code>Keras</code> and <code>SKLearn</code>, and hence the main <code>DecisionTreeClassifier</code> class has methods <code>fit</code>, <code>predict</code>, <code>evaluate</code>.</p>
+<p>The interface is inspired by other popular machine learning libraries such as <code>Keras</code> and <code>SKLearn</code>, and hence the main <code>DecisionTreeClassifier</code> class has methods <code>fit,</code> <code>predict,</code> <code>evaluate</code>.</p>
+<h3 id="overall-structure"><a class="header-link" href="#overall-structure"></a>Overall Structure</h3>
+<p>The most significant parts of our implementation can be found in 6 files:</p>
+<p><code>find_split.py</code> (utils package): A utility file that provides functionality to identify the best attribute to split the dataset on. The find_split() function, defined in this file, is used by each node of the Decision Tree. It takes a dataset and returns an index of the attribute to split on, the value to split on in that attribute and the two partitions of data after the split is performed. </p>
+<p><code>confusion_matrix.py</code> (utils package): Another utility file that is used to compute the confusion matrix, using build_confusion_matrix(), and all the statistics associated with the confusion matrix, using stats(), to assess how well the Decision Tree is performing. These statistics include the recall, precision and F1-measure for each class (indicating which room the user is standing in).</p>
+<p><code>evaluate.py:</code> This file contains the k-folds cross validation algorithm that is used to evaluate the performance of trees with and without pruning. The function used for this evaluation is <code>k_folds_cv()</code> and it uses two helper functions, <code>build_tree()</code> and <code>update_statistics()</code>, build a tree and update the statistics calculated so far, in each fold of the algorithm.</p>
+<p><code>node.py:</code> The structure of the Node class is defined in this file. The Node class abstracts was designed to abstract away the internal tree representation and the logic associated with building a Decision Tree or using it for predicting the user&#39;s location. The functionality it provides ranges from generating child nodes (using _gen_nodes()) to being able to node specific pruning and evaluation functions.</p>
+<p><code>decision_tree.py:</code> This file defines the blueprint for the DecisionTreeClassifier class that outlines the public API required in order to provide a user with an interface to the root node of a Decision Tree. The functions available as a part of the API are fit, evaluate, predict, prune and plot_tree. Functionality to calculate the maximum depth of the tree is also provided in this class.</p>
+<p><code>random_forest.py:</code> The Random Forest Algorithm is implemented in this file as an extension to the task. It provides a very similar API to the DecisionTreeClassifier but does not provide a function to calculate the depth, as it generates a forest with many trees. This algorithm has a better performance on both the noisy as well as the clean datasets. </p>
 <h3 id="instantiation-and-training"><a class="header-link" href="#instantiation-and-training"></a>Instantiation and training</h3>
-<p>To use, first import (from top level of this folder, similar to what can be found in <code>main.py</code>)</p>
+<p>To use, first import (from top level of this folder, similar to what can be found in <code>decisiontrees/evaluate.py</code>)</p>
 <pre class="hljs"><code><span class="hljs-keyword">from</span> decisiontrees <span class="hljs-keyword">import</span> DecisionTreeClassifier
-dt = DecisionTreeClassifier()</code></pre><p>Then, simply <code>fit</code> the model on some data:</p>
+dt = DecisionTreeClassifier()</code></pre><p>Then, simply <code>fit</code> (or train) the model on some data to generate a populated tree:</p>
 <pre class="hljs"><code>dt.fit(training_data)</code></pre><p>The input data format must be a 2-dimensional <code>numpy</code> <code>ndarray</code>, with the last column being integer labels. For example, with the given datasets in the coursework, you can do:</p>
 <pre class="hljs"><code><span class="hljs-keyword">with</span> open(<span class="hljs-string">'data/clean_dataset.txt'</span>) <span class="hljs-keyword">as</span> clean_dataset:
   training_data = np.loadtxt(clean_dataset)</code></pre><h3 id="making-predictions-and-evaluations"><a class="header-link" href="#making-predictions-and-evaluations"></a>Making predictions and evaluations</h3>
-<p>To make a prediction, simply call <code>predict</code>:</p>
+<p>To make a prediction on some data (may be one query or even multiple queries), simply call the <code>predict</code> function:</p>
 <pre class="hljs"><code>dt.predict(test_data)</code></pre><p>where <code>test_data</code> is the exact same format as the training data, but without the last column (of labels).</p>
 <p>There is also an <code>evaluate</code> function:</p>
 <pre class="hljs"><code>dt.evaluate(labeled_test_data)</code></pre><p>where <code>labeled_test_data</code> is the same format as <code>training_data</code> (i.e. it is labeled). What this will do is internally call <code>predict</code> on the features, then compare with the actual labels in order to compute accuracy, precision and recall (of each class), as well as a confusion matrix (as a <code>numpy</code> array, with predictions as columns and actual labels as rows). This is all returned as a dictionary.</p>
@@ -42,7 +50,7 @@ array([[<span class="hljs-number">79</span>,  <span class="hljs-number">0</span>
 <p>You can also visualize the tree, using <code>dt.plot_tree()</code>, which will give you something like this:</p>
 <p class="img-container"><img src="images/tree.png" alt="Tree Example"></p>
 <h3 id="tree-height-and-average-height"><a class="header-link" href="#tree-height-and-average-height"></a>Tree Height and Average Height</h3>
-<p>There is also a <code>height</code> method.</p>
+<p>There is also a <code>height</code> method that calculates the maximum depth (also defined as height) of a decision tree.</p>
 <pre class="hljs"><code>&gt;&gt;&gt; <span class="hljs-selector-tag">dt</span>.<span class="hljs-attribute">height</span>()
 <span class="hljs-number">8</span></code></pre><h3 id="random-forest-model"><a class="header-link" href="#random-forest-model"></a>Random Forest Model</h3>
 <p>We also wrote a Random Forest extension, under the <code>RandomForestClassifier</code> class. It has the exact same interface as <code>DecisionTreeClassifier</code> (apart from depth).</p>
@@ -50,6 +58,27 @@ array([[<span class="hljs-number">79</span>,  <span class="hljs-number">0</span>
 
 rf = RandomForestClassifier()
 rf.fit(train_data)
-predictions = rf.predict(test_data)</code></pre>    </article>
+predictions = rf.predict(test_data)</code></pre><h3 id="running-a-custom-dataset"><a class="header-link" href="#running-a-custom-dataset"></a>Running a Custom Dataset</h3>
+<p>The <code>main.py</code> file is constructed to allow users to easily configure the setup to build the kind of tree they want on their own custom dataset.</p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> decisiontrees.evaluate <span class="hljs-keyword">import</span> k_folds_cv
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">"__main__"</span>:
+    <span class="hljs-keyword">with</span> open(<span class="hljs-string">'data/clean_dataset.txt'</span>) <span class="hljs-keyword">as</span> f:
+        data = np.loadtxt(f)
+    np.random.seed(<span class="hljs-number">50</span>)
+    np.random.shuffle(data)
+    evaluation =\
+        k_folds_cv(data, k=<span class="hljs-number">10</span>, validation=<span class="hljs-keyword">True</span>)
+    print(evaluation[<span class="hljs-string">"accuracy"</span>])</code></pre><p>The configuration setup can be found at the end of the <code>main.py</code> file in the <code>__main__</code> function. To replace the current setup with your own dataset, replace <code>data/clean_dataset.txt</code> with the path to your dataset (the working directory is assumed to be the top level directory of this repository).</p>
+<p>A seed of 50 is currently used for the random shuffle of the dataset. This seed can be changed as required and for a different seed to be used for each run, the line <code>np.random.seed(50)</code> can be commented out.</p>
+<p>The setup assumes a user would like to view the output of a k-fold cross validation using a Decision Tree generated by the DecisionTreeClassifier, with the option of pruning set to <code>True</code>. In order to run the sae evaluation without pruning, one simply has to set <code>validation=False</code> in the call to <code>k_folds_cv()</code>. </p>
+<p>An option to set the number of folds is also provided (the default being 10 as required by the spec). To customise this, <code>k</code> simply has to be set to the desired value in the call to <code>k_folds_cv()</code>. </p>
+<p>Finally, the format of the output (average of all the folds) of the function is a dictionary with keys as shown below:</p>
+<pre class="hljs"><code>{
+  <span class="hljs-string">"accuracy"</span>: accuracy,
+  <span class="hljs-string">"confusion_matrix"</span>: average_cm,
+  <span class="hljs-string">"statistics"</span>: average_statistics
+}</code></pre><p>One can build their own Classifier (be it <code>DecisionTreeClassifier</code> or <code>RandomTreeClassifier</code>), train it, evaluate and make predictions from scratch as described above in the relevant functions and simply replacing all the code in the <code>__main__</code> function with that code.  </p>
+    </article>
   </body>
 </html>
