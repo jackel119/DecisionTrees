@@ -10,6 +10,7 @@ def split_data(dataset, i, k=10):
     """
     partition_size = len(dataset) // k
 
+    # split the data at index i
     test_data = dataset[i * partition_size: (i + 1) * partition_size]
     train_indexes = np.r_[0: (i * partition_size),
                           ((i + 1) * partition_size): len(dataset)]
