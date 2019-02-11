@@ -18,7 +18,7 @@ class RandomForestClassifier:
 
         :param train_data: 2d numpy array with the last column as labels
         """
-
+        self.forest_info = []
         self.num_labels = int(max(train_data[:, -1]))
 
         no_features = train_data.shape[1]
