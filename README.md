@@ -1,3 +1,4 @@
+__Note__: An HTML-generated version of this Markdown file can be found in  `out/README.html`
 # Decision Trees
 
 This is a simple implementation of decision trees.
@@ -5,21 +6,21 @@ This is a simple implementation of decision trees.
 
 The interface is inspired by other popular machine learning libraries such as `Keras` and `SKLearn`, and hence the main `DecisionTreeClassifier` class has methods `fit,` `predict,` `evaluate`.
 
-### Overall Structure 
+### Overall Structure
 
 The most significant parts of our implementation can be found in 6 files:
 
-`find_split.py` (utils package): A utility file that provides functionality to identify the best attribute to split the dataset on. The find\_split() function, defined in this file, is used by each node of the Decision Tree. It takes a dataset and returns an index of the attribute to split on, the value to split on in that attribute and the two partitions of data after the split is performed. 
+`find_split.py` (`utils` package): A utility file that provides functionality to identify the best attribute to split the dataset on. The find\_split() function, defined in this file, is used by each node of the Decision Tree. It takes a dataset and returns an index of the attribute to split on, the value to split on in that attribute and the two partitions of data after the split is performed.
 
-`confusion_matrix.py` (utils package): Another utility file that is used to compute the confusion matrix, using build_confusion_matrix(), and all the statistics associated with the confusion matrix, using stats(), to assess how well the Decision Tree is performing. These statistics include the recall, precision and F1-measure for each class (indicating which room the user is standing in).
+`confusion_matrix.py` (`utils` package): Another utility file that is used to compute the confusion matrix, using build_confusion_matrix(), and all the statistics associated with the confusion matrix, using stats(), to assess how well the Decision Tree is performing. These statistics include the recall, precision and F1-measure for each class (indicating which room the user is standing in).
 
 `evaluate.py:` This file contains the k-folds cross validation algorithm that is used to evaluate the performance of trees with and without pruning. The function used for this evaluation is `k_folds_cv()` and it uses two helper functions, `build_tree()` and `update_statistics()`, build a tree and update the statistics calculated so far, in each fold of the algorithm.
 
-`node.py:` The structure of the Node class is defined in this file. The Node class abstracts was designed to abstract away the internal tree representation and the logic associated with building a Decision Tree or using it for predicting the user's location. The functionality it provides ranges from generating child nodes (using _gen_nodes()) to being able to node specific pruning and evaluation functions.
+`node.py:` The structure of the Node class is defined in this file. The Node class abstracts was designed to abstract away the internal tree representation and the logic associated with building a Decision Tree or using it for predicting the user's location. The functionality it provides ranges from generating child nodes (using `gen_nodes())` to being able to node specific pruning and evaluation functions.
 
-`decision_tree.py:` This file defines the blueprint for the DecisionTreeClassifier class that outlines the public API required in order to provide a user with an interface to the root node of a Decision Tree. The functions available as a part of the API are fit, evaluate, predict, prune and plot\_tree. Functionality to calculate the maximum depth of the tree is also provided in this class.
+`decision_tree.py:` This file defines the blueprint for the `DecisionTreeClassifier` class that outlines the public API required in order to provide a user with an interface to the root node of a Decision Tree. The functions available as a part of the API are fit, evaluate, predict, prune and plot\_tree. Functionality to calculate the maximum depth of the tree is also provided in this class.
 
-`random_forest.py:` The Random Forest Algorithm is implemented in this file as an extension to the task. It provides a very similar API to the DecisionTreeClassifier but does not provide a function to calculate the depth, as it generates a forest with many trees. This algorithm has a better performance on both the noisy as well as the clean datasets. 
+`random_forest.py:` The Random Forest Algorithm is implemented in this file as an extension to the task. It provides a very similar API to the `DecisionTreeClassifier` but does not provide a function to calculate the depth, as it generates a forest with many trees. This algorithm has a better performance on both the noisy as well as the clean datasets.
 
 ### Instantiation and training
 
@@ -127,9 +128,9 @@ The configuration setup can be found at the end of the `main.py` file in the `__
 
 A seed of 50 is currently used for the random shuffle of the dataset. This seed can be changed as required and for a different seed to be used for each run, the line `np.random.seed(50)` can be commented out.
 
-The setup assumes a user would like to view the output of a k-fold cross validation using a Decision Tree generated by the DecisionTreeClassifier, with the option of pruning set to `True`. In order to run the sae evaluation without pruning, one simply has to set `validation=False` in the call to `k_folds_cv()`. 
+The setup assumes a user would like to view the output of a k-fold cross validation using a Decision Tree generated by the `DecisionTreeClassifier`, with the option of pruning set to `True`. In order to run the sae evaluation without pruning, one simply has to set `validation=False` in the call to `k_folds_cv()`.
 
-An option to set the number of folds is also provided (the default being 10 as required by the spec). To customise this, `k` simply has to be set to the desired value in the call to `k_folds_cv()`. 
+An option to set the number of folds is also provided (the default being 10 as required by the spec). To customise this, the `k` argument simply has to be set to the desired value in the call to `k_folds_cv()`.
 
 Finally, the format of the output (average of all the folds) of the function is a dictionary with keys as shown below:
 
@@ -141,4 +142,4 @@ Finally, the format of the output (average of all the folds) of the function is 
 }
 ```
 
-One can build their own Classifier (be it `DecisionTreeClassifier` or `RandomTreeClassifier`), train it, evaluate and make predictions from scratch as described above in the relevant functions and simply replacing all the code in the `__main__` function with that code.  
+One can build their own Classifier (be it `DecisionTreeClassifier` or `RandomTreeClassifier`), train it, evaluate and make predictions from scratch as described above in the relevant functions and simply replacing all the code in the `__main__` function with that code.
